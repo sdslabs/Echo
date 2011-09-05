@@ -1,0 +1,140 @@
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Untitled Document</title>
+
+<style>
+body {margin:0 0 0 0; padding: 0 0 0 0; font-family:  Abscissa, Acens, Arial; font-size:18px;}
+
+#links{margin-left:835px; margin-top:-55px; padding:7px;white-space:nowrap;position:relative; width:500px; font-family: Abscissa, Acens, Arial; font-size:18px;}
+#link2{ margin-left:145px;}
+#link3{margin-left: 290px;}
+	
+		#links a {color:white; text-decoration:none;display :block;width:100px;float:left;text-align:center;}
+		#links a:visited{color:white;text-decoration:none;}
+		#links a:active{color:#e9e9e9;text-decoration:none;}
+		#links a:hover{ color:#e9e9e9;text-decoration:none;}
+		
+#search{ margin-right:300px; margin-left:300px; }		
+#searchbox {margin-top: 60px; margin-left:0px; }
+#searchQuery {  background:none; border:none; font-family:Abscissa, Acens, Arial; font-size:18px;}
+#searchQuery:focus { outline:none; }
+#lookitup {font-family:Abscissa, Acens, Arial; color: black; margin-left: 539px; margin-top: -200px; font-size:18px; text-decoration:none; }
+#look{ margin-top:-28px;}
+#mostread {color:#1571a9; margin-top: 80px;}
+#highestrated{color:#1571a9;  margin-top: 130px;}
+
+#recommend {margin-left: 1050px; margin-top:-325px;}
+#intro {color:#1571a9; }
+#results {color:black; font-size:15px; font-family:Abscissa, Acens, Arial;}
+
+#end {height:100px; background-image:url(head.jpg); background-repeat:repeat-x; margin: 0 0 0 0; margin-left:-1050px ;margin-top:470px; margin-right:0px;}
+		
+
+</style>
+</head>
+
+
+<script type="text/javascript" src="http://code.jquery.com/jquery-git.js"></script>
+
+
+
+<body>
+<div id="header"><img src="Untitled-11.jpg"; height="74px"; width="1349.5" /><div>
+
+<div id="links">
+				<div id="link1"><a href="#" class="active">HOME</a></div>
+				<div id="link2"><a href="#" class="link">ABOUT US</a></div>
+				<div id="link3"><a href="#" class="link">FEEDBACK</a></div>
+</div>
+
+<div id="searchbox"> <img src="search.jpg" /> </div>
+
+<div id="mostread"> MOST READ </div>
+ <div id="highestrated"> HIGHEST RATED </div>
+<div id="recommend">
+          <div id="intro"> Books recommended for you : </div>
+          <div id="results"> <u> </u> </div>
+<div>
+
+
+<div id="searchForm">
+	<fieldset>
+			<form action="getSearchResult.php" id="echoSearch">
+				 <input type="text" id="searchQuery" value="" size="65px" placeholder="Type name of the book here..." />     
+                <div id="look"> <a  id="lookitup" href="#" class="link"> LOOK IT UP </a> </div>
+				<input type="submit" value="Echo Search" id="submitSearch">
+			</form>
+	</fieldset> 
+</div>
+ 
+<div id="error"></div>
+<div id="searchResults" style="float:left"> </div>
+<div id="recommendationResults" style="float:left"> </div>
+
+
+
+
+<div id="flash"></div>
+<ol id="insert_search" class="update">
+
+</ol>
+<script type="text/javascript">
+
+$("#searchForm").submit(function() 
+	{
+	var search_word = $("#searchQuery").val();
+	var dataString = 'query='+ search_word;
+
+	if(search_word=='')
+	{
+	}
+	else
+	{
+		$.ajax({
+			type: "GET",
+			url: "192.168.208.204/echo/getSearchResult.php",
+			context: document.getElementById("searchResults"),
+			data: dataString,
+			cache: false,
+			beforeSend: function(html) 
+					{
+						document.getElementById("searchResults").innerHTML = ''; 
+						$("#flash").show();
+						$("#flash").html('<img src="ajax-loader.gif" /> Loading Results...');
+					},
+
+		})
+		.error(function(data) { 
+									$('#error').html('<p>Your request could not be processed due to' +  data + '</p>');
+							}
+				)
+		.success(function(html) {
+									for(var i in html){
+
+
+
+															var event = $("<div class='event_item' id='"+ html[i].bookId +"'></div>");
+															//make div class "date" with event.date inside
+															$("<div class='date'>" + html[i].bookName+ "</div>").appendTo(event);
+															//make div class "location" with event.location inside
+															$("<div class='location'>" + html[i].author+ "</div>").appendTo(event);
+															//make div class "descrip" with event.descrip inside
+															$("<div class='descrip'>" + html[i].description + "</div>").appendTo(event);
+															$("<div class='publisher'>" + html[i].publisher + "</div>").appendTo(event);
+															//make div class "detail" with event.extra inside
+       														$("<img class='icon' href='" + html[i].icon + "' /img>").appendTo(event);
+															console.log(event);
+															$(event).appendTo('#searchResults');
+													}
+
+								}
+return false;
+});
+
+</script>
+
+
+
+</html>
