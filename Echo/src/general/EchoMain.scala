@@ -59,8 +59,8 @@ object EchoMain {
         server.join();
         echo.stop();
     
-   
-   // println("Echo testing starts")
+   }
+   /*// println("Echo testing starts")
     
     
     //add documents
@@ -95,6 +95,6 @@ object EchoMain {
     //ask for recommendations for the books listed above
     
     
-  }
+  }*/
   
 }

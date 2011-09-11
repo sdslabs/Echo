@@ -1,6 +1,6 @@
 package servlet
 
-import general._
+import main._
 import utils._
 
 import scala.collection.mutable.Map
@@ -44,7 +44,7 @@ import org.eclipse.jetty.servlet._;
 	   	val dataStore = m.getDB("echo")
 	   	val extracter = new EchoExtraction()
   
-		var query:String ="Welcome to Echo!";
+		
 		//getInfo() given the id of the book
 		
 					def getInfo(id : UUID) : Map[String,String] = {
@@ -75,11 +75,14 @@ import org.eclipse.jetty.servlet._;
 		    response.setContentType("text/html");
 			response.setStatus(HttpServletResponse.SC_OK);
 			//Taking in the search query , passing to EchoController , handling results. 
-			             query=request.getQueryString()
+			             
                          
 			             
+                         
 			      if(wtd=="search")       
 			      {
+			    	  
+			    	  	 var query=request.getParameter("query")
 			        
 	                     val result = actor ? EchoMessage.Query(query) onTimeout() {
 			                    
@@ -103,7 +106,7 @@ import org.eclipse.jetty.servlet._;
                         response.setContentType("application/json");
     		                      	// Get the printwriter object from response to write the required json object to the output stream      
     		                      	val out: PrintWriter = response.getWriter();
-    		                      	// Assuming your json object is **jsonObject**, perform the following, it will return your json object  
+    		                      	//  performing the following returns the json object  
     		                      	out.print(sResults);
     		                      	out.flush();
                         
@@ -112,14 +115,24 @@ import org.eclipse.jetty.servlet._;
 			      if(wtd=="rec")
 			      {
 			    	  
-			    	  		val bid:String = query
-			    	  		val recResults = actor ? EchoMessage.GetRecommendation(bid) onTimeout() {
+			    	  		val bid:String = request.getParameter("bid")
+			    	  		val res = actor ? EchoMessage.GetRecommendation(bid) onTimeout() {
 			                    
 			               response.getWriter().println("Your Request has timed out!")
 			               
 			             }
 			    	  	  
-			    	  		val res : List[Map[String,String]]= recResults.get.asInstanceOf[EchoMessage.RecommenderReply].recResults
+			    	  		val recResults : List[Map[String,String]]= res.get.asInstanceOf[EchoMessage.RecommenderReply].res
+			    	  		// returning recommendation results as a JSONObject
+			    	  		
+			    	  		val rResults: JSONObject= new JSONObject(recResults)
+			    	  		response.setContentType("application/json");
+    		                      	// Get the printwriter object from response to write the required json object to the output stream      
+    		                      	val out: PrintWriter = response.getWriter();
+    		                      	//  performing the following returns the json object  
+    		                      	out.print(rResults);
+    		                      	out.flush();
+			    	  		
 			    	  	    	
 			    	  		
 			    	  		
