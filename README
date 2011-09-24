@@ -1,4 +1,0 @@
-#Echo
-
-Echo is a indexing + search engine running on Scala on top of Lucene, Tika to index, search lots of documents. It also offers a Recommendation engine as well.
-

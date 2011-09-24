@@ -55,8 +55,15 @@ class RunEchoServlet(wtd: String,actor : ActorRef) extends HttpServlet{
 	   var res : Map[String,String] = new HashMap[String,String]()
 	
 	   while(cur.hasNext){
-		   res = extracter.format(cur.next)
-	   }
+		 res.put("Title",cur.next().get("title").asInstanceOf[String])
+               res.put("Sub-Title",cur.next().get("subtitle").asInstanceOf[String])
+             res.put("Author(s)",cur.next().get("authors").asInstanceOf[String])
+           res.put("Publisher",cur.next().get("publisher").asInstanceOf[String])
+         res.put("Categories",cur.next().get("categories").asInstanceOf[String])
+        EchoLogger.info("Got Map[String,String] that has info about search/rec results for the book id" + id)      	   
+     
+     
+    }
 	   return res 
 
    }
