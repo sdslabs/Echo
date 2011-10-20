@@ -38,39 +38,11 @@ import org.eclipse.jetty.servlet._;
 class RunEchoServlet(wtd: String,actor : ActorRef) extends HttpServlet{
  
    val ipAdd = EchoConfigAccessor.getString("echo.db.ipAdd")
-   val m = new Mongo(ipAdd)
-   val dbName = EchoConfigAccessor.getString("echo.db")
-   val dataStore = m.getDB(dbName)
-   val extracter = new EchoExtraction()
-  
-		
-   //getInfo() given the id of the book
-	
-   def getInfo(id : UUID) : Map[String,String] = {
-	   val query : BasicDBObject = new BasicDBObject()
-	   query.put("id", id.toString)
-	   val collectionName = EchoConfigAccessor.getString("echo.db.collectionName")
-	   val coll = dataStore.getCollection(collectionName)
-	   val cur = coll.find(query)
-	   var res : Map[String,String] = new HashMap[String,String]()
-	
-	   while(cur.hasNext){
-		 res.put("Title",cur.next().get("title").asInstanceOf[String])
-               res.put("Sub-Title",cur.next().get("subtitle").asInstanceOf[String])
-             res.put("Author(s)",cur.next().get("authors").asInstanceOf[String])
-           res.put("Publisher",cur.next().get("publisher").asInstanceOf[String])
-         res.put("Categories",cur.next().get("categories").asInstanceOf[String])
-        EchoLogger.info("Got Map[String,String] that has info about search/rec results for the book id" + id)      	   
-     
-     
-    }
-	   return res 
 
-   }
-	
-   //end of getInfo()
-   override def doGet(request: HttpServletRequest , response:HttpServletResponse ){
-     response.setContentType("text/html");
+   
+		
+     override def doGet(request: HttpServletRequest , response:HttpServletResponse ){
+     response.setContentType("application/json");
      response.setStatus(HttpServletResponse.SC_OK);
      //Taking in the search query , passing to EchoController , handling results. 
          
@@ -79,37 +51,20 @@ class RunEchoServlet(wtd: String,actor : ActorRef) extends HttpServlet{
        val result = actor !!! EchoMessage.Query(query)
        
        val res : Map[Float, UUID] = result.get.asInstanceOf[EchoMessage.QueryReply].result   
-       val searchResults: List[Map[String,String]] = new ArrayList[Map[String,String]]() 
-       // adding to the List the information for each book
-       res.keySet foreach ( e => { 
-    	   searchResults.add(getInfo(res(e)))
-       })
+       val sRWR = new ArrayList()
+        res.foreach(book => sRWR.add(book["id"]))  
        
-       // returning searchResults as a JSON object
-
-       val sResults:JSONObject = new JSONObject(searchResults.get(0))
-       response.setContentType("application/json");
+       
+              val sResults:JSONObject = new JSONObject(sRWR)
+       
        //Get the printwriter object from response to write the required json object to the output stream      
        val out: PrintWriter = response.getWriter();
        //performing the following returns the json object  
        out.print(sResults);
        out.flush();
-        
+      
+
      }
-  
-     if(wtd=="rec"){
-       val bid:String = request.getParameter("bid")
-       val res = actor !!! EchoMessage.GetRecommendation(bid) 
-	   val recResults : List[Map[String,String]]= res.get.asInstanceOf[EchoMessage.RecommenderReply].res.asInstanceOf[List[Map[String,String]]]
-	   // returning recommendation results as a JSONObject
-       val rResults: JSONObject= new JSONObject(recResults)
-       response.setContentType("application/json")
-       //Get the printwriter object from response to write the required json object to the output stream
-       val out: PrintWriter = response.getWriter();
-       //  performing the following returns the json object
-       out.print(rResults);
-       out.flush();
-	 }
-   }
+    
 }
 

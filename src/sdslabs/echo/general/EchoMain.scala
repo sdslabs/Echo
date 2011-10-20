@@ -39,9 +39,9 @@ object EchoMain {
     context.setContextPath("/")
 	server.setHandler(context)
 	val holder1: ServletHolder= new ServletHolder(new RunEchoServlet("search",echo))
-	val holder2: ServletHolder=new ServletHolder(new RunEchoServlet("rec",echo))
+	val holder2: ServletHolder=new ServletHolder(new RunEchoServlet("category",echo))
 	context.addServlet(holder1,"/search/*")
-	context.addServlet(holder2, "/rec/*")
+	context.addServlet(holder2, "/category/*")
 	
 	server.start()
 	server.join()
