@@ -31,18 +31,28 @@ get '/category/?query' do
       db = connection.db("mydb")
       coll = db.collection("testCollection")
       result = []
-      query = params[:query]
-      s=query.length
-      (3..s).each{ 
-                            (1..s-n+1).each { |m|
-                              tempQuery = query[m-1, n]
-                              cursor = coll.find({"id" => tempQuery})
-                              if cursor.has_next?
-                                    doc = cursor.next
-                                    result = result | doc["list"]
-                              end
-                                              }
-                                                }
+      counter = 0
+	tempquery = params[:query]
+	temp = tempquery.split("+")
+	temp.each { |query|
+		s = query.length
+		n = s
+		while n > 2 
+			(1..s-n+1).each { |m|
+				tempQuery = query[m-1, n]
+				cursor = coll.find({"id" => tempQuery})
+				if cursor.has_next?
+					doc = cursor.next
+					result = result | doc["list"]
+					counter += 1
+				end
+			}
+		if counter > 0
+			break
+		end
+		n = n-1
+		end
+	}
       if result.empty? == false
       haml :category, :locals => { :results => result}
       else
