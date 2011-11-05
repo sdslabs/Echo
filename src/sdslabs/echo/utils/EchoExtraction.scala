@@ -1,4 +1,4 @@
-package sdslabs.practice
+package sdslabs.echo.utils
 
 import com.mongodb._
 import java.io.File
@@ -78,7 +78,7 @@ class EchoExtraction {
   
   def store(id : String, cat : String) {
     var m : Mongo = new Mongo( "localhost" )
-	var db : DB = m.getDB( "mydb" )
+	var db : DB = m.getDB( "echo" )
 	var doc : BasicDBObject = new BasicDBObject()
 	var coll : DBCollection = db.getCollection("category")
   }
@@ -131,4 +131,36 @@ class EchoExtraction {
 	}
     return sb
   }
+  
+  def toDBObject( inp: Map[String,String]) : DBObject = {  
+    val obj : DBObject = new BasicDBObject()
+    inp.keySet foreach ( e => {
+    obj.put(e, inp.get(e).get)
+     }
+    )
+   return obj
+  } 
+  
+  def getInfo( name: String): Map[String, String] = {
+    val gRes : Map[String,String] = searchGoogle(name)
+    if( gRes == null){
+    val ret = new HashMap[String,String]()
+    ret += ("title" -> name)
+    return ret
+   }
+  gRes += ("name" -> name)
+  return gRes
+ } 
+  
+  def format( inp : DBObject): Map[String, String] = {
+     val res : Map[String, String] = new HashMap[String, String]
+     val set = inp.keySet.asInstanceOf[Set[String]]
+     set foreach ( e => {
+     res.put(e, inp.get(e).asInstanceOf[String])
+    }
+   )
+ if( inp.containsKey("cluster"))
+ res += ("cluster" -> inp.get("cluster").asInstanceOf[String])
+ return res
+  } 
 }
