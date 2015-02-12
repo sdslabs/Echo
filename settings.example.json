@@ -1,0 +1,84 @@
+{
+    "app_id": "echophp",
+    "app_secret": "",
+    "domain": "sdslabs.local",
+    "api_root": "http://sdslabs.local/api/server-api.php",
+    "environment": "development",
+    "access_token": "",
+    "api_url": "https://api.sdslabs.co.in/stream/events?access_token=",
+    "root_dir": "/home/jayant/Projects/echo-php/",
+    "results_per_page":20,
+    "topcharts_max":6,
+    "books_url": "https://echo-books.sdslabs.co.in/",
+
+    "mysql": {
+    	"host": "localhost",
+		"user": "",
+		"password": "",
+		"db": "",
+		"tables": {
+			"metadata":"BookMetadata",
+			"search_details":"MainDetails",
+			"book_details":"OtherDetails",
+			"reported":"Reported",
+			"downloads":"Downloads",
+			"search_logs":"SearchLogs",
+            "libgen_data":"libgen"
+		},
+		"md5salt":""
+	},
+    
+    "indexing": {
+    	"batch_size":30,
+    	"num_batches":5,
+    	"raw_books":"",
+    	"added_books":"",
+    	"indexed_books":"",
+        "thumbs_dir":"",
+        "extensions": ["pdf", "epub", "chm", "djvu"]
+    },
+
+    "metadata": {
+    	"batch_size":100,
+    	"num_batches":1,
+    	"api_key":""
+    },
+
+    "solr": {
+        "books": {
+            "client_config": {
+                "adapteroptions": {
+                    "host":"127.0.0.1",
+                    "port":8983,
+                    "path":"~/solr/",
+                    "core":"core0"
+                }
+            },
+
+            "weights": {
+                "title":8.0,
+                "author":5.0,
+                "isbn_10":5.0,
+                "isbn_13":5.0,
+                "content":0.01,
+                "description":0.5,
+                "categories":1.5
+            },
+            "min_score":0.01,
+            "max_rows":1000
+        },
+
+        "categories": {
+            "client_config": {
+                "adapteroptions": {
+                    "host":"127.0.0.1",
+                    "port":8983,
+                    "path":"~/solr/",
+                    "core":"core1"
+                }
+            },
+            "min_score":1.0,
+            "max_rows":50
+        }
+    }
+}
